@@ -26,7 +26,9 @@ extern uint8_t year;
 uint8_t bcdToDec(uint8_t val);
 uint8_t DecTobcd(uint8_t dec);
 //void DisplayTime();
-void RTC_write(uint8_t* data);
+void Set_mode24h(void);
+	
+void RTC_write(uint8_t* data,int count);
 void RTC_read(void);
 void Set_time(uint8_t hour,uint8_t minute,uint8_t second,uint8_t dayofweek,uint8_t date,uint8_t month,uint8_t year);
 #endif

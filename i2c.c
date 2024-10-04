@@ -1,6 +1,10 @@
 #include "i2c.h"
-
+void i2c_init(void){
+		SCL_OUTPUT;
+		SDA_OUTPUT;
+}
 void i2c_startcondition(){
+	SDA_OUTPUT;
 	SCL_1;
 	SDA_1;
 	delay_us(10);
@@ -10,7 +14,7 @@ void i2c_startcondition(){
 	delay_us(20);
 }
 void i2c_stopcondition(){
-	
+	SDA_OUTPUT;
 	SDA_0;
 	delay_us(10);
 	SCL_1;
@@ -54,7 +58,8 @@ uint8_t i2c_readACK() {
     uint8_t ACK = SDA_VAL;
     // Chuy?n PB10 v? ch? d? output open-drain
     SDA_OUTPUT;
-    SCL_1; delay_us(10);
+    SCL_1; 
+		delay_us(10);
     SCL_0;
     SDA_0;
 		delay_us(10);
@@ -72,6 +77,18 @@ void i2c_sendACK(){
 	SDA_INPUT; // Ð?t l?i SDA v? input sau khi g?i ACK
 	delay_us(10);
 }
+void i2c_sendNACK(){
+	SDA_OUTPUT;
+	SCL_0;
+	SDA_1; // keo SDA len 1
+	delay_us(10);
+	SCL_1;
+	delay_us(10);
+	SCL_0;
+	SDA_INPUT; // Ð?t l?i SDA v? input sau khi g?i ACK
+	delay_us(10);
+}
+// hau het van hanh o che do master write va read, slave thuong la cac cam bien co san phan cung ho tro giao tiep
 uint8_t i2c_writedata(uint8_t address, char *data){
 	// start ---------------
 	i2c_startcondition();
