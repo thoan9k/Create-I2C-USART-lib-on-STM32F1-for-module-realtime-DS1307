@@ -12,9 +12,9 @@
 #define DATE_register 				0x04
 #define MONTH_register 				0x05
 #define YEAR_register 				0x06
-
 #define CONTROL_register			0x07
 #define RAM										0x08
+
 extern uint8_t hour;
 extern uint8_t minute;
 extern uint8_t second;
@@ -22,11 +22,13 @@ extern uint8_t dayofweek;
 extern uint8_t date;
 extern uint8_t month;
 extern uint8_t year;
+extern uint8_t IS_PM;
+extern uint8_t MODE;
 //Functions
 uint8_t bcdToDec(uint8_t val);
 uint8_t DecTobcd(uint8_t dec);
 //void DisplayTime();
-void Set_mode24h(void);
+void Set_mode(int mode, int IS_MODE_12_PM);// set up form 12h or 24h
 	
 void RTC_write(uint8_t* data,int count);
 void RTC_read(void);

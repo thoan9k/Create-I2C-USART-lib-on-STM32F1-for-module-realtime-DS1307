@@ -6,7 +6,8 @@ uint8_t bcdToDec(uint8_t bcd) {
 uint8_t DecTobcd(uint8_t dec){
 	return ( (dec/10*16) + (dec%10));
 }
-void Set_mode24h(){
+void Set_mode(int mode, int IS_MODE_12_PM){
+	MODE = mode;
 	i2c_startcondition();
 	
 	// write address
@@ -27,14 +28,19 @@ void Set_mode24h(){
 		return;
 	}
 	// begin transfering datas
-	i2c_writebyte(0x3F&hour);
+	if(mode == 24) i2c_writebyte(0x00);// 0x3f = 0b0011 1111
+	else if(mode==12){
+		IS_PM = IS_MODE_12_PM;
+		if(IS_MODE_12_PM) i2c_writebyte(0x60); // 0x40-0b0100 0000 AM , 0x60-0b0110 0000 PM 
+			   
+		else i2c_writebyte(0x40); 
+	}
 	ACK=i2c_readACK();
 	if(ACK){
 			i2c_stopcondition();
 			return;
 		}		
-			
-	
+
 }
 void RTC_write(uint8_t* data, int count){
 	i2c_startcondition();
@@ -50,7 +56,7 @@ void RTC_write(uint8_t* data, int count){
 		return;
 	}
 	// write word address, first pointer address
-	i2c_writebyte(0x00);
+	i2c_writebyte(SECOND_register);
 	ACK=i2c_readACK();
 	if(ACK == 1){
 		i2c_stopcondition();
@@ -107,13 +113,17 @@ void RTC_read() {
         i2c_sendNACK();                // G?i NACK sau khi d?c byte cu?i cùng
 				i2c_stopcondition();
         // 8. Luu d? li?u vào các bi?n toàn c?c
-        second = data[0];
-        minute = data[1];
-        hour = data[2];
+        second = bcdToDec( data[0]);
+        minute = bcdToDec( data[1]);
+				if(MODE==12) {
+					IS_PM = (data[2]>>5)&0x01; // 0b0010 0000;
+					hour = ((data[2] >> 4) &0x01) * 10 + (data[2] & 0x0f);
+				}
+				else hour = ((data[2] >> 4) &0x03) * 10 + (data[2] & 0x0f);
         dayofweek = data[3];
-        date = data[4];
-        month = data[5];
-        year = data[6];
+        date = bcdToDec( data[4]);
+        month = bcdToDec( data[5]);
+        year = bcdToDec(data[6]);
 
         // 9. Ket thuc I2C
         
@@ -129,6 +139,9 @@ void Set_time(uint8_t hour, uint8_t minute, uint8_t second, uint8_t dayofweek, u
     data[0] = DecTobcd(second);    // Giây
     data[1] = DecTobcd(minute);    // Phút
     data[2] = ((hour / 10) << 4) | (hour % 10);      // Gi?
+		if(MODE==12){
+			data[2] |= IS_PM << 5|1<<6;
+		}
     data[3] = DecTobcd(dayofweek); // Ngày trong tu?n
     data[4] = DecTobcd(date);      // Ngày
     data[5] = DecTobcd(month);     // Tháng

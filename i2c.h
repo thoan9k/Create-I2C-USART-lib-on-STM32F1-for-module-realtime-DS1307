@@ -12,8 +12,7 @@
 #define SDA_OUTPUT GPIOB->CRH &= ~(GPIO_CRH_MODE10 | GPIO_CRH_CNF10);GPIOB->CRH |= (GPIO_CRH_MODE10_1 | GPIO_CRH_MODE10_0 | GPIO_CRH_CNF10_0)
 #define SCL_INPUT  GPIOB->CRH &= ~(GPIO_CRH_MODE11 | GPIO_CRH_CNF11); GPIOB->CRH |= GPIO_CRH_CNF11_1; SCL_1
 #define SCL_OUTPUT GPIOB->CRH &= ~(GPIO_CRH_MODE11 | GPIO_CRH_CNF11); GPIOB->CRH |= (GPIO_CRH_MODE11_1 | GPIO_CRH_MODE11_0 | GPIO_CRH_CNF11_0)
-  
-//#define SDA_VAL 0
+
 
 extern void delay_us(uint32_t delay);
 // i2c --------------------------------------

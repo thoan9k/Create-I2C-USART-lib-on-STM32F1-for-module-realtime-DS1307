@@ -52,18 +52,18 @@ int8_t i2c_readbyte(){
 	return data;
 }
 uint8_t i2c_readACK() {
-    // C?u hình PB10 ? ch? d? input v?i pull-up
-    SDA_INPUT;
-    delay_us(10);
-    uint8_t ACK = SDA_VAL;
-    // Chuy?n PB10 v? ch? d? output open-drain
-    SDA_OUTPUT;
-    SCL_1; 
-		delay_us(10);
-    SCL_0;
-    SDA_0;
-		delay_us(10);
-    return ACK;
+	// C?u hình PB10 ? ch? d? input v?i pull-up
+	SDA_INPUT;
+	delay_us(10);
+	uint8_t ACK = SDA_VAL;
+	// Chuy?n PB10 v? ch? d? output open-drain
+	SDA_OUTPUT;
+	SCL_1; 
+	delay_us(10);
+	SCL_0;
+	SDA_0;
+	delay_us(10);
+	return ACK;
 }
 
 void i2c_sendACK(){
@@ -132,12 +132,10 @@ int8_t i2c_readdata(uint8_t address, char* data, int8_t count){
 	uint8_t ACK=i2c_readACK();
 	if(ACK) {
 		i2c_stopcondition();
-//		lcd_writecmd(ADDRESS_I2C,ROW2);
-//		lcd_writedata(ADDRESS_I2C,"NOT RESPOND SLAVE!");
+
 		return -1;	
 	}
-//	lcd_writecmd(ADDRESS_I2C,ROW2);
-//	lcd_writedata(ADDRESS_I2C,"ADDRESS SUCCESS");
+
 	// begin read datas from slave-------------
 	for(int i=0;i<count;i++){
 		*data=i2c_readbyte();
